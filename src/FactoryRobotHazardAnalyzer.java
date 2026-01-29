@@ -1,11 +1,14 @@
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
  * Factory Robot Hazard Analyzer
  *
+ * Final implementation using Map-based machinery state handling.
  *
  * @author Aayush
- * @version 7.0
+ * @version 8.0
  */
 public class FactoryRobotHazardAnalyzer {
 
@@ -44,7 +47,13 @@ public class FactoryRobotHazardAnalyzer {
             throw new RobotSafetyException("Error: Worker density must be 1-20");
         }
 
-        double machineRiskFactor = getMachineRiskFactor(machineryState);
+        Map<String, Double> machineryRiskMap = buildMachineryRiskMap();
+
+        if (!machineryRiskMap.containsKey(machineryState)) {
+            throw new RobotSafetyException("Error: Unsupported machinery state");
+        }
+
+        double machineRiskFactor = machineryRiskMap.get(machineryState);
 
         double hazardRisk =
                 ((1.0 - armPrecision) * 15.0)
@@ -53,17 +62,13 @@ public class FactoryRobotHazardAnalyzer {
         System.out.println("Robot Hazard Risk Score: " + hazardRisk);
     }
 
-    private static double getMachineRiskFactor(String machineryState)
-            throws RobotSafetyException {
+    private static Map<String, Double> buildMachineryRiskMap() {
 
-        if (machineryState.equals("Worn")) {
-            return 1.3;
-        } else if (machineryState.equals("Faulty")) {
-            return 2.0;
-        } else if (machineryState.equals("Critical")) {
-            return 3.0;
-        } else {
-            throw new RobotSafetyException("Error: Unsupported machinery state");
-        }
+        Map<String, Double> riskMap = new HashMap<>();
+        riskMap.put("Worn", 1.3);
+        riskMap.put("Faulty", 2.0);
+        riskMap.put("Critical", 3.0);
+
+        return riskMap;
     }
 }
