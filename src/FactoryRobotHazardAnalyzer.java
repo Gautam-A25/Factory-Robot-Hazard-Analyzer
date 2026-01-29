@@ -5,7 +5,7 @@ import java.util.Scanner;
  * Displays the system name.
  *
  * @author Aayush
- * @version 3.0
+ * @version 4.0
  */
 public class FactoryRobotHazardAnalyzer {
 
@@ -20,14 +20,29 @@ public class FactoryRobotHazardAnalyzer {
         System.out.println("Enter Machinery State:");
         String machineryState = sc.next();
 
-        double machineRiskFactor = 1.0;
+        double machineRiskFactor = 0.0;
 
-        double hazardRisk =
-                ((1.0 - armPrecision) * 15.0)
-                        + (workerDensity * machineRiskFactor);
+        if (armPrecision < 0.0 || armPrecision > 1.0) {
+            System.out.println("Error: Arm precision must be 0.0-1.0");
+        } else if (workerDensity < 1 || workerDensity > 20) {
+            System.out.println("Error: Worker density must be 1-20");
+        } else if (machineryState.equals("Worn")) {
+            machineRiskFactor = 1.3;
+        } else if (machineryState.equals("Faulty")) {
+            machineRiskFactor = 2.0;
+        } else if (machineryState.equals("Critical")) {
+            machineRiskFactor = 3.0;
+        } else {
+            System.out.println("Error: Unsupported machinery state");
+        }
 
-        System.out.println("Robot Hazard Risk Score: " + hazardRisk);
+        if (machineRiskFactor != 0.0) {
+            double hazardRisk =
+                    ((1.0 - armPrecision) * 15.0)
+                            + (workerDensity * machineRiskFactor);
 
+            System.out.println("Robot Hazard Risk Score: " + hazardRisk);
+        }
         sc.close();
     }
 }
